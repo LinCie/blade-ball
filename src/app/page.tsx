@@ -125,6 +125,15 @@ export default function Home() {
     return sum;
   }, 0);
 
+  const totalEarned = items.reduce((sum, item) => {
+    if (item.sellingPrice > 0) {
+      const tax = item.isBooth ? 0.01 : 0; // 1% tax for booth
+      const afterTaxPrice = Math.floor(item.sellingPrice * (1 - tax));
+      return sum + afterTaxPrice;
+    }
+    return sum;
+  }, 0);
+
   return (
     <Box className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
       {/* Header */}
@@ -261,15 +270,15 @@ export default function Home() {
           </Box>
 
           {/* Booth Tax Checkbox */}
-          <Box className="mt-4 flex items-center justify-center">
-            <label className="flex cursor-pointer items-center gap-2 text-white">
+          <Box className="mt-6 flex items-center justify-center">
+            <label className="flex cursor-pointer items-center gap-3 text-white hover:text-purple-200 transition-colors duration-200">
               <input
                 type="checkbox"
                 checked={newItemIsBooth}
                 onChange={(e) => setNewItemIsBooth(e.target.checked)}
-                className="h-4 w-4 rounded border-gray-300 bg-gray-100 text-purple-600 focus:ring-purple-500"
+                className="h-6 w-6 rounded border-2 border-purple-400 bg-purple-900/30 text-purple-500 focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-gray-900 cursor-pointer transition-all duration-200 hover:border-purple-300 hover:bg-purple-800/40"
               />
-              <span className="text-sm">Sell in Booth (1% tax)</span>
+              <span className="text-base font-medium">Sell in Booth (1% tax)</span>
             </label>
           </Box>
         </Paper>
@@ -314,6 +323,16 @@ export default function Home() {
                               onClick={() => stopEditing()}
                               className="text-green-400 hover:bg-green-400/10 hover:text-green-300"
                               size="medium"
+                              sx={{
+                                borderRadius: '50%',
+                                width: '40px',
+                                height: '40px',
+                                minWidth: '40px',
+                                minHeight: '40px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center'
+                              }}
                             >
                               ✓
                             </IconButton>
@@ -409,7 +428,7 @@ export default function Home() {
                                 />
                               </Box>
                               <Box className="flex items-center justify-center">
-                                <label className="flex cursor-pointer items-center gap-2 text-white">
+                                <label className="flex cursor-pointer items-center gap-3 text-white hover:text-purple-200 transition-colors duration-200">
                                   <input
                                     type="checkbox"
                                     checked={item.isBooth}
@@ -420,9 +439,9 @@ export default function Home() {
                                         e.target.checked,
                                       )
                                     }
-                                    className="h-4 w-4 rounded bg-gray-400/30 text-purple-600 focus:ring-purple-500"
+                                    className="h-6 w-6 rounded border-2 border-purple-400 bg-purple-900/30 text-purple-500 focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-gray-900 cursor-pointer transition-all duration-200 hover:border-purple-300 hover:bg-purple-800/40"
                                   />
-                                  <span className="text-sm">
+                                  <span className="text-sm font-medium">
                                     Sell in Booth (1% tax)
                                   </span>
                                 </label>
@@ -502,6 +521,17 @@ export default function Home() {
                       className="text-center font-semibold text-green-200"
                     >
                       Total Sell: 🪙 {totalSellingPrice.toLocaleString()} tokens
+                    </Typography>
+                  </Box>
+                )}
+
+                {totalEarned > 0 && (
+                  <Box className="rounded border border-blue-400/30 bg-blue-900/20 p-3">
+                    <Typography
+                      variant="h6"
+                      className="text-center font-semibold text-blue-200"
+                    >
+                      Total Earned: 🪙 {totalEarned.toLocaleString()} tokens
                     </Typography>
                   </Box>
                 )}
@@ -671,14 +701,37 @@ export default function Home() {
                             className="text-center text-xs text-blue-200"
                           >
                             Profit: 🪙{" "}
-                            {Math.floor(
-                              totalSellingPrice -
-                                calculateDiscountedPrice(
-                                  totalBasePrice,
-                                  percentage,
-                                ),
-                            ).toLocaleString()}{" "}
+                            {(() => {
+                              const profit = Math.floor(
+                                totalSellingPrice -
+                                  calculateDiscountedPrice(
+                                    totalBasePrice,
+                                    percentage,
+                                  ),
+                              );
+                              const buyingPrice = calculateDiscountedPrice(
+                                totalBasePrice,
+                                percentage,
+                              );
+                              const profitPercentage = calculateProfitPercentage(buyingPrice, profit);
+                              return profit.toLocaleString();
+                            })()}{" "}
                             tokens
+                            {(() => {
+                              const profit = Math.floor(
+                                totalSellingPrice -
+                                  calculateDiscountedPrice(
+                                    totalBasePrice,
+                                    percentage,
+                                  ),
+                              );
+                              const buyingPrice = calculateDiscountedPrice(
+                                totalBasePrice,
+                                percentage,
+                              );
+                              const profitPercentage = calculateProfitPercentage(buyingPrice, profit);
+                              return profitPercentage !== 0 ? ` (${profitPercentage > 0 ? '+' : ''}${profitPercentage}%)` : '';
+                            })()}
                           </Typography>
                         </Box>
                       )}
@@ -725,14 +778,43 @@ export default function Home() {
                               className="text-center text-purple-200"
                             >
                               Profit: 🪙{" "}
-                              {Math.floor(
-                                totalSellingPrice -
-                                  calculateDiscountedPrice(
-                                    totalBasePrice,
-                                    parseFloat(customPercentage),
+                              {(() => {
+                                const profit = Math.floor(
+                                  calculateProfit(
+                                    calculateDiscountedPrice(
+                                      totalBasePrice,
+                                      parseFloat(customPercentage),
+                                    ),
+                                    totalSellingPrice,
+                                    items.some(item => item.isBooth)
                                   ),
-                              ).toLocaleString()}{" "}
+                                );
+                                const buyingPrice = calculateDiscountedPrice(
+                                  totalBasePrice,
+                                  parseFloat(customPercentage),
+                                );
+                                const profitPercentage = calculateProfitPercentage(buyingPrice, profit);
+                                return profit.toLocaleString();
+                              })()}{" "}
                               tokens
+                              {(() => {
+                                const profit = Math.floor(
+                                  calculateProfit(
+                                    calculateDiscountedPrice(
+                                      totalBasePrice,
+                                      parseFloat(customPercentage),
+                                    ),
+                                    totalSellingPrice,
+                                    items.some(item => item.isBooth)
+                                  ),
+                                );
+                                const buyingPrice = calculateDiscountedPrice(
+                                  totalBasePrice,
+                                  parseFloat(customPercentage),
+                                );
+                                const profitPercentage = calculateProfitPercentage(buyingPrice, profit);
+                                return profitPercentage !== 0 ? ` (${profitPercentage > 0 ? '+' : ''}${profitPercentage}%)` : '';
+                              })()}
                             </Typography>
                           </Box>
                         )}
@@ -777,10 +859,31 @@ export default function Home() {
                               className="mt-1 text-center text-green-200"
                             >
                               Profit: 🪙{" "}
-                              {Math.floor(
-                                totalSellingPrice - parseFloat(customPrice),
-                              ).toLocaleString()}{" "}
+                              {(() => {
+                                const profit = Math.floor(
+                                  calculateProfit(
+                                    parseFloat(customPrice),
+                                    totalSellingPrice,
+                                    items.some(item => item.isBooth)
+                                  ),
+                                );
+                                const buyingPrice = parseFloat(customPrice);
+                                const profitPercentage = calculateProfitPercentage(buyingPrice, profit);
+                                return profit.toLocaleString();
+                              })()}{" "}
                               tokens
+                              {(() => {
+                                const profit = Math.floor(
+                                  calculateProfit(
+                                    parseFloat(customPrice),
+                                    totalSellingPrice,
+                                    items.some(item => item.isBooth)
+                                  ),
+                                );
+                                const buyingPrice = parseFloat(customPrice);
+                                const profitPercentage = calculateProfitPercentage(buyingPrice, profit);
+                                return profitPercentage !== 0 ? ` (${profitPercentage > 0 ? '+' : ''}${profitPercentage}%)` : '';
+                              })()}
                             </Typography>
                           )}
                         </Box>
