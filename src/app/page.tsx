@@ -4,8 +4,6 @@ import {
   Box,
   Container,
   Typography,
-  Card,
-  CardContent,
   Button,
   Paper,
   TextField,
@@ -14,8 +12,6 @@ import {
   Divider,
   List,
   ListItem,
-  ListItemText,
-  ListItemSecondaryAction
 } from "@mui/material";
 import {
   SportsEsports,
@@ -23,8 +19,7 @@ import {
   Delete,
   TrendingDown,
   Percent,
-  Info,
-  AttachMoney
+  AttachMoney,
 } from "@mui/icons-material";
 import { useState } from "react";
 
@@ -38,12 +33,12 @@ interface Item {
 
 export default function Home() {
   const [items, setItems] = useState<Item[]>([]);
-  const [newItemName, setNewItemName] = useState('');
-  const [newItemPrice, setNewItemPrice] = useState('');
-  const [newItemSellingPrice, setNewItemSellingPrice] = useState('');
+  const [newItemName, setNewItemName] = useState("");
+  const [newItemPrice, setNewItemPrice] = useState("");
+  const [newItemSellingPrice, setNewItemSellingPrice] = useState("");
   const [newItemIsBooth, setNewItemIsBooth] = useState(false);
-  const [customPercentage, setCustomPercentage] = useState('');
-  const [customPrice, setCustomPrice] = useState('');
+  const [customPercentage, setCustomPercentage] = useState("");
+  const [customPrice, setCustomPrice] = useState("");
   const [editingItem, setEditingItem] = useState<string | null>(null);
 
   const addItem = () => {
@@ -53,25 +48,27 @@ export default function Home() {
         name: newItemName.trim(),
         price: parseFloat(newItemPrice),
         sellingPrice: newItemSellingPrice ? parseFloat(newItemSellingPrice) : 0,
-        isBooth: newItemIsBooth
+        isBooth: newItemIsBooth,
       };
       setItems([...items, newItem]);
-      setNewItemName('');
-      setNewItemPrice('');
-      setNewItemSellingPrice('');
+      setNewItemName("");
+      setNewItemPrice("");
+      setNewItemSellingPrice("");
       setNewItemIsBooth(false);
     }
   };
 
   const deleteItem = (id: string) => {
-    setItems(items.filter(item => item.id !== id));
+    setItems(items.filter((item) => item.id !== id));
     if (editingItem === id) setEditingItem(null);
   };
 
-  const updateItem = (id: string, field: keyof Item, value: any) => {
-    setItems(items.map(item =>
-      item.id === id ? { ...item, [field]: value } : item
-    ));
+  const updateItem = (id: string, field: keyof Item, value: unknown) => {
+    setItems(
+      items.map((item) =>
+        item.id === id ? { ...item, [field]: value } : item,
+      ),
+    );
   };
 
   const startEditing = (id: string) => {
@@ -83,19 +80,28 @@ export default function Home() {
   };
 
   const resetCustomInputs = () => {
-    setCustomPercentage('');
-    setCustomPrice('');
+    setCustomPercentage("");
+    setCustomPrice("");
   };
 
   const calculateDiscountedPrice = (price: number, percentage: number) => {
     return Math.floor(price * (1 - percentage / 100));
   };
 
-  const calculateDiscountPercentage = (originalPrice: number, discountedPrice: number) => {
-    return Math.floor(((originalPrice - discountedPrice) / originalPrice) * 100);
+  const calculateDiscountPercentage = (
+    originalPrice: number,
+    discountedPrice: number,
+  ) => {
+    return Math.floor(
+      ((originalPrice - discountedPrice) / originalPrice) * 100,
+    );
   };
 
-  const calculateProfit = (buyingPrice: number, sellingPrice: number, isBooth: boolean) => {
+  const calculateProfit = (
+    buyingPrice: number,
+    sellingPrice: number,
+    isBooth: boolean,
+  ) => {
     const tax = isBooth ? 0.01 : 0; // 1% tax for booth
     const afterTaxPrice = Math.floor(sellingPrice * (1 - tax));
     return afterTaxPrice - buyingPrice;
@@ -108,7 +114,10 @@ export default function Home() {
   const predefinedPercentages = [5, 10, 15, 20, 25, 30];
 
   const totalBasePrice = items.reduce((sum, item) => sum + item.price, 0);
-  const totalSellingPrice = items.reduce((sum, item) => sum + (item.sellingPrice || 0), 0);
+  const totalSellingPrice = items.reduce(
+    (sum, item) => sum + (item.sellingPrice || 0),
+    0,
+  );
   const totalProfit = items.reduce((sum, item) => {
     if (item.sellingPrice > 0) {
       return sum + calculateProfit(item.price, item.sellingPrice, item.isBooth);
@@ -119,12 +128,12 @@ export default function Home() {
   return (
     <Box className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
       {/* Header */}
-      <Box className="bg-black/20 backdrop-blur-sm border-b border-white/10">
+      <Box className="border-b border-white/10 bg-black/20 backdrop-blur-sm">
         <Container maxWidth="lg">
           <Box className="flex items-center justify-between py-4">
             <Box className="flex items-center gap-3">
-              <SportsEsports className="text-purple-400 text-3xl" />
-              <Typography variant="h4" className="text-white font-bold">
+              <SportsEsports className="text-3xl text-purple-400" />
+              <Typography variant="h4" className="font-bold text-white">
                 Blade Ball Price Negotiator
               </Typography>
             </Box>
@@ -138,29 +147,32 @@ export default function Home() {
       {/* Main Content */}
       <Container maxWidth="lg" className="py-12">
         {/* Hero Section */}
-        <Box className="text-center mb-16">
+        <Box className="mb-16 text-center">
           <Typography
             variant="h2"
-            className="text-white font-bold mb-4 text-4xl md:text-6xl"
+            className="mb-4 text-4xl font-bold text-white md:text-6xl"
           >
             Blade Ball Price Negotiator
           </Typography>
           <Typography
             variant="h6"
-            className="text-purple-200 mb-8 max-w-2xl mx-auto"
+            className="mx-auto mb-8 max-w-2xl text-purple-200"
           >
-            Manage items and calculate the perfect negotiation prices for Blade Ball!
-            Get negotiation strategies with various discount percentages.
+            Manage items and calculate the perfect negotiation prices for Blade
+            Ball! Get negotiation strategies with various discount percentages.
           </Typography>
         </Box>
 
         {/* Add Item Section */}
-        <Paper className="bg-white/5 backdrop-blur-sm border border-white/10 p-6 mb-8">
-          <Typography variant="h5" className="text-white font-semibold mb-4 text-center">
+        <Paper className="mb-8 border border-white/10 bg-white/5 p-6 backdrop-blur-sm">
+          <Typography
+            variant="h5"
+            className="mb-4 text-center font-semibold text-white"
+          >
             Add New Item
           </Typography>
 
-          <Box className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+          <Box className="grid grid-cols-1 items-end gap-4 md:grid-cols-4">
             <TextField
               label="Item Name"
               value={newItemName}
@@ -168,17 +180,17 @@ export default function Home() {
               placeholder="Example: Legendary Sword"
               className="flex-1"
               sx={{
-                '& .MuiOutlinedInput-root': {
-                  color: 'white',
-                  '& fieldset': {
-                    borderColor: 'rgba(255, 255, 255, 0.3)',
+                "& .MuiOutlinedInput-root": {
+                  color: "white",
+                  "& fieldset": {
+                    borderColor: "rgba(255, 255, 255, 0.3)",
                   },
-                  '&:hover fieldset': {
-                    borderColor: 'rgba(255, 255, 255, 0.5)',
+                  "&:hover fieldset": {
+                    borderColor: "rgba(255, 255, 255, 0.5)",
                   },
                 },
-                '& .MuiInputLabel-root': {
-                  color: 'rgba(255, 255, 255, 0.7)',
+                "& .MuiInputLabel-root": {
+                  color: "rgba(255, 255, 255, 0.7)",
                 },
               }}
             />
@@ -190,20 +202,22 @@ export default function Home() {
               onChange={(e) => setNewItemPrice(e.target.value)}
               placeholder="1000"
               InputProps={{
-                startAdornment: <InputAdornment position="start">🪙</InputAdornment>,
+                startAdornment: (
+                  <InputAdornment position="start">🪙</InputAdornment>
+                ),
               }}
               sx={{
-                '& .MuiOutlinedInput-root': {
-                  color: 'white',
-                  '& fieldset': {
-                    borderColor: 'rgba(255, 255, 255, 0.3)',
+                "& .MuiOutlinedInput-root": {
+                  color: "white",
+                  "& fieldset": {
+                    borderColor: "rgba(255, 255, 255, 0.3)",
                   },
-                  '&:hover fieldset': {
-                    borderColor: 'rgba(255, 255, 255, 0.5)',
+                  "&:hover fieldset": {
+                    borderColor: "rgba(255, 255, 255, 0.5)",
                   },
                 },
-                '& .MuiInputLabel-root': {
-                  color: 'rgba(255, 255, 255, 0.7)',
+                "& .MuiInputLabel-root": {
+                  color: "rgba(255, 255, 255, 0.7)",
                 },
               }}
             />
@@ -215,20 +229,22 @@ export default function Home() {
               onChange={(e) => setNewItemSellingPrice(e.target.value)}
               placeholder="1200 (Optional)"
               InputProps={{
-                startAdornment: <InputAdornment position="start">🪙</InputAdornment>,
+                startAdornment: (
+                  <InputAdornment position="start">🪙</InputAdornment>
+                ),
               }}
               sx={{
-                '& .MuiOutlinedInput-root': {
-                  color: 'white',
-                  '& fieldset': {
-                    borderColor: 'rgba(255, 255, 255, 0.3)',
+                "& .MuiOutlinedInput-root": {
+                  color: "white",
+                  "& fieldset": {
+                    borderColor: "rgba(255, 255, 255, 0.3)",
                   },
-                  '&:hover fieldset': {
-                    borderColor: 'rgba(255, 255, 255, 0.5)',
+                  "&:hover fieldset": {
+                    borderColor: "rgba(255, 255, 255, 0.5)",
                   },
                 },
-                '& .MuiInputLabel-root': {
-                  color: 'rgba(255, 255, 255, 0.7)',
+                "& .MuiInputLabel-root": {
+                  color: "rgba(255, 255, 255, 0.7)",
                 },
               }}
             />
@@ -237,7 +253,7 @@ export default function Home() {
               variant="contained"
               onClick={addItem}
               disabled={!newItemName.trim() || !newItemPrice}
-              className="bg-purple-600 hover:bg-purple-700 text-white h-14"
+              className="h-14 bg-purple-600 text-white hover:bg-purple-700"
               startIcon={<Add />}
             >
               Add Item
@@ -246,12 +262,12 @@ export default function Home() {
 
           {/* Booth Tax Checkbox */}
           <Box className="mt-4 flex items-center justify-center">
-            <label className="flex items-center gap-2 text-white cursor-pointer">
+            <label className="flex cursor-pointer items-center gap-2 text-white">
               <input
                 type="checkbox"
                 checked={newItemIsBooth}
                 onChange={(e) => setNewItemIsBooth(e.target.checked)}
-                className="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500"
+                className="h-4 w-4 rounded border-gray-300 bg-gray-100 text-purple-600 focus:ring-purple-500"
               />
               <span className="text-sm">Sell in Booth (1% tax)</span>
             </label>
@@ -259,16 +275,19 @@ export default function Home() {
         </Paper>
 
         {/* Items List & Calculator */}
-        <Box className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <Box className="grid grid-cols-1 gap-8 lg:grid-cols-2">
           {/* Items List */}
-          <Paper className="bg-white/5 backdrop-blur-sm border border-white/10 p-6">
-            <Typography variant="h5" className="text-white font-semibold mb-4 text-center">
+          <Paper className="border border-white/10 bg-white/5 p-6 backdrop-blur-sm">
+            <Typography
+              variant="h5"
+              className="mb-4 text-center font-semibold text-white"
+            >
               Item List ({items.length})
             </Typography>
 
             {items.length === 0 ? (
-              <Box className="text-center py-8">
-                <AttachMoney className="text-gray-500 text-4xl mb-2" />
+              <Box className="py-8 text-center">
+                <AttachMoney className="mb-2 text-4xl text-gray-500" />
                 <Typography variant="body2" className="text-gray-500">
                   No items yet. Add your first item!
                 </Typography>
@@ -278,19 +297,22 @@ export default function Home() {
                 {items.map((item) => (
                   <ListItem
                     key={item.id}
-                    className="bg-white/5 rounded border border-white/10 mb-3"
-                    sx={{ padding: '16px' }}
+                    className="mb-3 rounded border border-white/10 bg-white/5"
+                    sx={{ padding: "16px" }}
                   >
                     <Box className="flex-1">
-                      <Box className="flex items-center justify-between mb-2">
-                        <Typography variant="body1" className="text-white font-medium">
+                      <Box className="mb-2 flex items-center justify-between">
+                        <Typography
+                          variant="body1"
+                          className="font-medium text-white"
+                        >
                           {item.name}
                         </Typography>
                         <Box className="flex items-center gap-2">
                           {editingItem === item.id ? (
                             <IconButton
                               onClick={() => stopEditing()}
-                              className="text-green-400 hover:text-green-300 hover:bg-green-400/10"
+                              className="text-green-400 hover:bg-green-400/10 hover:text-green-300"
                               size="medium"
                             >
                               ✓
@@ -298,7 +320,7 @@ export default function Home() {
                           ) : (
                             <IconButton
                               onClick={() => startEditing(item.id)}
-                              className="text-blue-400 hover:text-blue-300 hover:bg-blue-400/10"
+                              className="text-blue-400 hover:bg-blue-400/10 hover:text-blue-300"
                               size="medium"
                             >
                               ✏️
@@ -306,7 +328,7 @@ export default function Home() {
                           )}
                           <IconButton
                             onClick={() => deleteItem(item.id)}
-                            className="text-red-400 hover:text-red-300 hover:bg-red-400/10"
+                            className="text-red-400 hover:bg-red-400/10 hover:text-red-300"
                             size="medium"
                           >
                             <Delete />
@@ -315,33 +337,45 @@ export default function Home() {
                       </Box>
                       <Box className="space-y-2">
                         <Box className="space-y-1">
-                          <Typography variant="body2" className="text-purple-200">
+                          <Typography
+                            variant="body2"
+                            className="text-purple-200"
+                          >
                             Index: 🪙 {item.price.toLocaleString()} tokens
                           </Typography>
                           {editingItem === item.id ? (
-                            <Box className="mt-4 p-4 bg-blue-900/20 rounded border border-blue-400/30">
-                              <Typography variant="body2" className="text-blue-200 font-medium mb-3 text-center">
+                            <Box className="mt-4 rounded border border-blue-400/30 bg-blue-900/20 p-4">
+                              <Typography
+                                variant="body2"
+                                className="mb-3 text-center font-medium text-blue-200"
+                              >
                                 Edit Item
                               </Typography>
-                              <Box className="grid grid-cols-2 gap-4 mb-4">
+                              <Box className="mb-4 grid grid-cols-2 gap-4">
                                 <TextField
                                   size="small"
                                   label="Buy Price"
                                   type="number"
                                   value={item.price}
-                                  onChange={(e) => updateItem(item.id, 'price', parseFloat(e.target.value) || 0)}
+                                  onChange={(e) =>
+                                    updateItem(
+                                      item.id,
+                                      "price",
+                                      parseFloat(e.target.value) || 0,
+                                    )
+                                  }
                                   fullWidth
                                   sx={{
-                                    '& .MuiOutlinedInput-root': {
-                                      color: 'white',
-                                      fontSize: '0.75rem',
-                                      '& fieldset': {
-                                        borderColor: 'rgba(255, 255, 255, 0.3)',
+                                    "& .MuiOutlinedInput-root": {
+                                      color: "white",
+                                      fontSize: "0.75rem",
+                                      "& fieldset": {
+                                        borderColor: "rgba(255, 255, 255, 0.3)",
                                       },
                                     },
-                                    '& .MuiInputLabel-root': {
-                                      color: 'rgba(255, 255, 255, 0.7)',
-                                      fontSize: '0.75rem',
+                                    "& .MuiInputLabel-root": {
+                                      color: "rgba(255, 255, 255, 0.7)",
+                                      fontSize: "0.75rem",
                                     },
                                   }}
                                 />
@@ -349,53 +383,95 @@ export default function Home() {
                                   size="small"
                                   label="Sell Price"
                                   type="number"
-                                  value={item.sellingPrice || ''}
-                                  onChange={(e) => updateItem(item.id, 'sellingPrice', parseFloat(e.target.value) || 0)}
+                                  value={item.sellingPrice || ""}
+                                  onChange={(e) =>
+                                    updateItem(
+                                      item.id,
+                                      "sellingPrice",
+                                      parseFloat(e.target.value) || 0,
+                                    )
+                                  }
                                   fullWidth
                                   placeholder="Optional"
                                   sx={{
-                                    '& .MuiOutlinedInput-root': {
-                                      color: 'white',
-                                      fontSize: '0.75rem',
-                                      '& fieldset': {
-                                        borderColor: 'rgba(255, 255, 255, 0.3)',
+                                    "& .MuiOutlinedInput-root": {
+                                      color: "white",
+                                      fontSize: "0.75rem",
+                                      "& fieldset": {
+                                        borderColor: "rgba(255, 255, 255, 0.3)",
                                       },
                                     },
-                                    '& .MuiInputLabel-root': {
-                                      color: 'rgba(255, 255, 255, 0.7)',
-                                      fontSize: '0.75rem',
+                                    "& .MuiInputLabel-root": {
+                                      color: "rgba(255, 255, 255, 0.7)",
+                                      fontSize: "0.75rem",
                                     },
                                   }}
                                 />
                               </Box>
                               <Box className="flex items-center justify-center">
-                                <label className="flex items-center gap-2 text-white cursor-pointer">
+                                <label className="flex cursor-pointer items-center gap-2 text-white">
                                   <input
                                     type="checkbox"
                                     checked={item.isBooth}
-                                    onChange={(e) => updateItem(item.id, 'isBooth', e.target.checked)}
-                                    className="w-4 h-4 text-purple-600 bg-gray-400/30 rounded focus:ring-purple-500"
+                                    onChange={(e) =>
+                                      updateItem(
+                                        item.id,
+                                        "isBooth",
+                                        e.target.checked,
+                                      )
+                                    }
+                                    className="h-4 w-4 rounded bg-gray-400/30 text-purple-600 focus:ring-purple-500"
                                   />
-                                  <span className="text-sm">Sell in Booth (1% tax)</span>
+                                  <span className="text-sm">
+                                    Sell in Booth (1% tax)
+                                  </span>
                                 </label>
                               </Box>
                             </Box>
                           ) : (
                             <Box className="space-y-1">
                               {item.sellingPrice > 0 ? (
-                                <Typography variant="body2" className="text-green-200">
-                                  Sell: 🪙 {item.sellingPrice.toLocaleString()} tokens
-                                  {item.isBooth && <span className="text-yellow-200 ml-1">(Booth)</span>}
+                                <Typography
+                                  variant="body2"
+                                  className="text-green-200"
+                                >
+                                  Sell: 🪙 {item.sellingPrice.toLocaleString()}{" "}
+                                  tokens
+                                  {item.isBooth && (
+                                    <span className="ml-1 text-yellow-200">
+                                      (Booth)
+                                    </span>
+                                  )}
                                 </Typography>
                               ) : (
-                                <Typography variant="body2" className="text-gray-400">
+                                <Typography
+                                  variant="body2"
+                                  className="text-gray-400"
+                                >
                                   No sell price yet
                                 </Typography>
                               )}
                               {item.sellingPrice > 0 && (
-                                <Typography variant="body2" className="text-blue-200">
-                                  Profit: 🪙 {calculateProfit(item.price, item.sellingPrice, item.isBooth).toLocaleString()}{" "}
-                                  ({calculateProfitPercentage(item.price, calculateProfit(item.price, item.sellingPrice, item.isBooth))}%)
+                                <Typography
+                                  variant="body2"
+                                  className="text-blue-200"
+                                >
+                                  Profit: 🪙{" "}
+                                  {calculateProfit(
+                                    item.price,
+                                    item.sellingPrice,
+                                    item.isBooth,
+                                  ).toLocaleString()}{" "}
+                                  (
+                                  {calculateProfitPercentage(
+                                    item.price,
+                                    calculateProfit(
+                                      item.price,
+                                      item.sellingPrice,
+                                      item.isBooth,
+                                    ),
+                                  )}
+                                  %)
                                 </Typography>
                               )}
                             </Box>
@@ -410,25 +486,37 @@ export default function Home() {
 
             {items.length > 0 && (
               <Box className="mt-4 space-y-3">
-                <Box className="p-3 bg-purple-900/20 rounded border border-purple-400/30">
-                  <Typography variant="h6" className="text-white font-semibold text-center">
-                    Total Buy: 🪙 {totalBasePrice.toLocaleString()} tokens
+                <Box className="rounded border border-purple-400/30 bg-purple-900/20 p-3">
+                  <Typography
+                    variant="h6"
+                    className="text-center font-semibold text-white"
+                  >
+                    Total Index: 🪙 {totalBasePrice.toLocaleString()} tokens
                   </Typography>
                 </Box>
 
                 {totalSellingPrice > 0 && (
-                  <Box className="p-3 bg-green-900/20 rounded border border-green-400/30">
-                    <Typography variant="h6" className="text-green-200 font-semibold text-center">
+                  <Box className="rounded border border-green-400/30 bg-green-900/20 p-3">
+                    <Typography
+                      variant="h6"
+                      className="text-center font-semibold text-green-200"
+                    >
                       Total Sell: 🪙 {totalSellingPrice.toLocaleString()} tokens
                     </Typography>
                   </Box>
                 )}
 
                 {totalProfit !== 0 && (
-                  <Box className={`p-3 rounded border ${totalProfit > 0 ? 'bg-green-900/20 border-green-400/30' : 'bg-red-900/20 border-red-400/30'}`}>
-                    <Typography variant="h6" className={`font-semibold text-center ${totalProfit > 0 ? 'text-green-200' : 'text-red-200'}`}>
+                  <Box
+                    className={`rounded border p-3 ${totalProfit > 0 ? "border-green-400/30 bg-green-900/20" : "border-red-400/30 bg-red-900/20"}`}
+                  >
+                    <Typography
+                      variant="h6"
+                      className={`text-center font-semibold ${totalProfit > 0 ? "text-green-200" : "text-red-200"}`}
+                    >
                       Total Profit: 🪙 {totalProfit.toLocaleString()} tokens
-                      {totalProfit > 0 && ` (${Math.floor((totalProfit / totalBasePrice) * 100)}%)`}
+                      {totalProfit > 0 &&
+                        ` (${Math.floor((totalProfit / totalBasePrice) * 100)}%)`}
                     </Typography>
                   </Box>
                 )}
@@ -437,34 +525,43 @@ export default function Home() {
           </Paper>
 
           {/* Negotiation Calculator */}
-          <Paper className="bg-white/5 backdrop-blur-sm border border-white/10 p-6">
-            <Typography variant="h5" className="text-white font-semibold mb-4 text-center">
+          <Paper className="border border-white/10 bg-white/5 p-6 backdrop-blur-sm">
+            <Typography
+              variant="h5"
+              className="mb-4 text-center font-semibold text-white"
+            >
               Negotiation Calculator
             </Typography>
 
             {items.length === 0 ? (
-              <Box className="text-center py-8">
-                <TrendingDown className="text-gray-500 text-4xl mb-2" />
+              <Box className="py-8 text-center">
+                <TrendingDown className="mb-2 text-4xl text-gray-500" />
                 <Typography variant="body2" className="text-gray-500">
                   Add items first to see negotiation prices
                 </Typography>
               </Box>
             ) : (
               <Box>
-                <Box className="text-center mb-4">
-                  <Typography variant="h6" className="text-purple-300 mb-2">
+                <Box className="mb-4 text-center">
+                  <Typography variant="h6" className="mb-2 text-purple-300">
                     Total Index Price
                   </Typography>
-                  <Typography variant="h4" className="text-white font-bold">
+                  <Typography variant="h4" className="font-bold text-white">
                     🪙 {totalBasePrice.toLocaleString()} tokens
                   </Typography>
 
                   {totalSellingPrice > 0 && (
-                    <Box className="mt-3 p-3 bg-green-900/20 rounded border border-green-400/30">
-                      <Typography variant="body2" className="text-green-200 mb-1">
+                    <Box className="mt-3 rounded border border-green-400/30 bg-green-900/20 p-3">
+                      <Typography
+                        variant="body2"
+                        className="mb-1 text-green-200"
+                      >
                         If selling at normal price:
                       </Typography>
-                      <Typography variant="h6" className="text-green-200 font-semibold">
+                      <Typography
+                        variant="h6"
+                        className="font-semibold text-green-200"
+                      >
                         Profit: 🪙 {totalProfit.toLocaleString()} tokens
                       </Typography>
                     </Box>
@@ -474,7 +571,7 @@ export default function Home() {
                 <Divider className="my-4 bg-white/20" />
 
                 {/* Custom Inputs */}
-                <Box className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <Box className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2">
                   <TextField
                     fullWidth
                     label="Custom Percentage (%)"
@@ -483,17 +580,17 @@ export default function Home() {
                     onChange={(e) => setCustomPercentage(e.target.value)}
                     placeholder="Example: 12.5"
                     sx={{
-                      '& .MuiOutlinedInput-root': {
-                        color: 'white',
-                        '& fieldset': {
-                          borderColor: 'rgba(255, 255, 255, 0.3)',
+                      "& .MuiOutlinedInput-root": {
+                        color: "white",
+                        "& fieldset": {
+                          borderColor: "rgba(255, 255, 255, 0.3)",
                         },
-                        '&:hover fieldset': {
-                          borderColor: 'rgba(255, 255, 255, 0.5)',
+                        "&:hover fieldset": {
+                          borderColor: "rgba(255, 255, 255, 0.5)",
                         },
                       },
-                      '& .MuiInputLabel-root': {
-                        color: 'rgba(255, 255, 255, 0.7)',
+                      "& .MuiInputLabel-root": {
+                        color: "rgba(255, 255, 255, 0.7)",
                       },
                     }}
                   />
@@ -506,20 +603,22 @@ export default function Home() {
                     onChange={(e) => setCustomPrice(e.target.value)}
                     placeholder="Example: 1800"
                     InputProps={{
-                      startAdornment: <InputAdornment position="start">🪙</InputAdornment>,
+                      startAdornment: (
+                        <InputAdornment position="start">🪙</InputAdornment>
+                      ),
                     }}
                     sx={{
-                      '& .MuiOutlinedInput-root': {
-                        color: 'white',
-                        '& fieldset': {
-                          borderColor: 'rgba(255, 255, 255, 0.3)',
+                      "& .MuiOutlinedInput-root": {
+                        color: "white",
+                        "& fieldset": {
+                          borderColor: "rgba(255, 255, 255, 0.3)",
                         },
-                        '&:hover fieldset': {
-                          borderColor: 'rgba(255, 255, 255, 0.5)',
+                        "&:hover fieldset": {
+                          borderColor: "rgba(255, 255, 255, 0.5)",
                         },
                       },
-                      '& .MuiInputLabel-root': {
-                        color: 'rgba(255, 255, 255, 0.7)',
+                      "& .MuiInputLabel-root": {
+                        color: "rgba(255, 255, 255, 0.7)",
                       },
                     }}
                   />
@@ -527,7 +626,7 @@ export default function Home() {
 
                 {/* Reset Button */}
                 {(customPercentage || customPrice) && (
-                  <Box className="text-center mb-4">
+                  <Box className="mb-4 text-center">
                     <Button
                       variant="outlined"
                       onClick={resetCustomInputs}
@@ -540,24 +639,46 @@ export default function Home() {
                 )}
 
                 {/* Predefined Percentages */}
-                <Typography variant="subtitle1" className="text-white font-semibold mb-3">
+                <Typography
+                  variant="subtitle1"
+                  className="mb-3 font-semibold text-white"
+                >
                   Standard Percentages:
                 </Typography>
-                <Box className="space-y-2 mb-4">
+                <Box className="mb-4 space-y-2">
                   {predefinedPercentages.map((percentage) => (
-                    <Box key={percentage} className="bg-white/5 p-2 rounded">
-                      <Box className="flex justify-between items-center">
+                    <Box key={percentage} className="rounded bg-white/5 p-2">
+                      <Box className="flex items-center justify-between">
                         <Typography variant="body2" className="text-purple-200">
                           {percentage}% off
                         </Typography>
-                        <Typography variant="body2" className="text-white font-semibold">
-                          🪙 {calculateDiscountedPrice(totalBasePrice, percentage).toLocaleString()} tokens
+                        <Typography
+                          variant="body2"
+                          className="font-semibold text-white"
+                        >
+                          🪙{" "}
+                          {calculateDiscountedPrice(
+                            totalBasePrice,
+                            percentage,
+                          ).toLocaleString()}{" "}
+                          tokens
                         </Typography>
                       </Box>
                       {totalSellingPrice > 0 && (
-                        <Box className="mt-1 pt-1 border-t border-white/10">
-                          <Typography variant="body2" className="text-blue-200 text-center text-xs">
-                            Profit: 🪙 {Math.floor(totalSellingPrice - calculateDiscountedPrice(totalBasePrice, percentage)).toLocaleString()} tokens
+                        <Box className="mt-1 border-t border-white/10 pt-1">
+                          <Typography
+                            variant="body2"
+                            className="text-center text-xs text-blue-200"
+                          >
+                            Profit: 🪙{" "}
+                            {Math.floor(
+                              totalSellingPrice -
+                                calculateDiscountedPrice(
+                                  totalBasePrice,
+                                  percentage,
+                                ),
+                            ).toLocaleString()}{" "}
+                            tokens
                           </Typography>
                         </Box>
                       )}
@@ -569,24 +690,49 @@ export default function Home() {
                 {(customPercentage || customPrice) && (
                   <>
                     <Divider className="my-4 bg-white/20" />
-                    <Typography variant="subtitle1" className="text-white font-semibold mb-3">
+                    <Typography
+                      variant="subtitle1"
+                      className="mb-3 font-semibold text-white"
+                    >
                       Custom Results:
                     </Typography>
 
                     {customPercentage && (
-                      <Box className="bg-purple-600/20 p-3 rounded border border-purple-400/50 mb-3">
-                        <Box className="flex justify-between items-center">
-                          <Typography variant="body2" className="text-purple-200">
+                      <Box className="mb-3 rounded border border-purple-400/50 bg-purple-600/20 p-3">
+                        <Box className="flex items-center justify-between">
+                          <Typography
+                            variant="body2"
+                            className="text-purple-200"
+                          >
                             {customPercentage}% off
                           </Typography>
-                          <Typography variant="h6" className="text-white font-bold">
-                            🪙 {calculateDiscountedPrice(totalBasePrice, parseFloat(customPercentage)).toLocaleString()} tokens
+                          <Typography
+                            variant="h6"
+                            className="font-bold text-white"
+                          >
+                            🪙{" "}
+                            {calculateDiscountedPrice(
+                              totalBasePrice,
+                              parseFloat(customPercentage),
+                            ).toLocaleString()}{" "}
+                            tokens
                           </Typography>
                         </Box>
                         {totalSellingPrice > 0 && (
-                          <Box className="mt-2 pt-2 border-t border-purple-400/30">
-                            <Typography variant="body2" className="text-purple-200 text-center">
-                              Profit: 🪙 {Math.floor(totalSellingPrice - calculateDiscountedPrice(totalBasePrice, parseFloat(customPercentage))).toLocaleString()} tokens
+                          <Box className="mt-2 border-t border-purple-400/30 pt-2">
+                            <Typography
+                              variant="body2"
+                              className="text-center text-purple-200"
+                            >
+                              Profit: 🪙{" "}
+                              {Math.floor(
+                                totalSellingPrice -
+                                  calculateDiscountedPrice(
+                                    totalBasePrice,
+                                    parseFloat(customPercentage),
+                                  ),
+                              ).toLocaleString()}{" "}
+                              tokens
                             </Typography>
                           </Box>
                         )}
@@ -594,23 +740,47 @@ export default function Home() {
                     )}
 
                     {customPrice && (
-                      <Box className="bg-green-600/20 p-3 rounded border border-green-400/50">
-                        <Box className="flex justify-between items-center">
-                          <Typography variant="body2" className="text-green-200">
+                      <Box className="rounded border border-green-400/50 bg-green-600/20 p-3">
+                        <Box className="flex items-center justify-between">
+                          <Typography
+                            variant="body2"
+                            className="text-green-200"
+                          >
                             Desired price
                           </Typography>
-                          <Typography variant="h6" className="text-white font-bold">
+                          <Typography
+                            variant="h6"
+                            className="font-bold text-white"
+                          >
                             🪙 {parseFloat(customPrice).toLocaleString()} tokens
                           </Typography>
                         </Box>
-                        <Box className="mt-2 pt-2 border-t border-green-400/30">
-                          <Typography variant="body2" className="text-green-200 text-center">
-                            Discount: {calculateDiscountPercentage(totalBasePrice, parseFloat(customPrice))}%
-                            (Save: 🪙 {Math.floor(totalBasePrice - parseFloat(customPrice)).toLocaleString()} tokens)
+                        <Box className="mt-2 border-t border-green-400/30 pt-2">
+                          <Typography
+                            variant="body2"
+                            className="text-center text-green-200"
+                          >
+                            Discount:{" "}
+                            {calculateDiscountPercentage(
+                              totalBasePrice,
+                              parseFloat(customPrice),
+                            )}
+                            % (Save: 🪙{" "}
+                            {Math.floor(
+                              totalBasePrice - parseFloat(customPrice),
+                            ).toLocaleString()}{" "}
+                            tokens)
                           </Typography>
                           {totalSellingPrice > 0 && (
-                            <Typography variant="body2" className="text-green-200 text-center mt-1">
-                              Profit: 🪙 {Math.floor(totalSellingPrice - parseFloat(customPrice)).toLocaleString()} tokens
+                            <Typography
+                              variant="body2"
+                              className="mt-1 text-center text-green-200"
+                            >
+                              Profit: 🪙{" "}
+                              {Math.floor(
+                                totalSellingPrice - parseFloat(customPrice),
+                              ).toLocaleString()}{" "}
+                              tokens
                             </Typography>
                           )}
                         </Box>
@@ -624,16 +794,22 @@ export default function Home() {
         </Box>
 
         {/* Negotiation Tips */}
-        <Paper className="bg-white/5 backdrop-blur-sm border border-white/10 p-6 mt-8">
-          <Typography variant="h5" className="text-white font-semibold mb-4 text-center">
+        <Paper className="mt-8 border border-white/10 bg-white/5 p-6 backdrop-blur-sm">
+          <Typography
+            variant="h5"
+            className="mb-4 text-center font-semibold text-white"
+          >
             Blade Ball Negotiation Strategy
           </Typography>
-          <Box className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <Box className="grid grid-cols-1 gap-6 md:grid-cols-3">
             <Box className="text-center">
-              <Box className="w-16 h-16 bg-purple-600/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Percent className="text-purple-400 text-2xl" />
+              <Box className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-purple-600/20">
+                <Percent className="text-2xl text-purple-400" />
               </Box>
-              <Typography variant="h6" className="text-white font-semibold mb-2">
+              <Typography
+                variant="h6"
+                className="mb-2 font-semibold text-white"
+              >
                 Start Low
               </Typography>
               <Typography variant="body2" className="text-gray-300">
@@ -642,10 +818,13 @@ export default function Home() {
             </Box>
 
             <Box className="text-center">
-              <Box className="w-16 h-16 bg-purple-600/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                <TrendingDown className="text-purple-400 text-2xl" />
+              <Box className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-purple-600/20">
+                <TrendingDown className="text-2xl text-purple-400" />
               </Box>
-              <Typography variant="h6" className="text-white font-semibold mb-2">
+              <Typography
+                variant="h6"
+                className="mb-2 font-semibold text-white"
+              >
                 Increase Gradually
               </Typography>
               <Typography variant="body2" className="text-gray-300">
@@ -654,10 +833,13 @@ export default function Home() {
             </Box>
 
             <Box className="text-center">
-              <Box className="w-16 h-16 bg-purple-600/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                <AttachMoney className="text-purple-400 text-2xl" />
+              <Box className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-purple-600/20">
+                <AttachMoney className="text-2xl text-purple-400" />
               </Box>
-              <Typography variant="h6" className="text-white font-semibold mb-2">
+              <Typography
+                variant="h6"
+                className="mb-2 font-semibold text-white"
+              >
                 Realistic Target
               </Typography>
               <Typography variant="body2" className="text-gray-300">
@@ -668,24 +850,28 @@ export default function Home() {
         </Paper>
 
         {/* Info Section */}
-        <Paper className="bg-white/5 backdrop-blur-sm border border-white/10 p-6 mt-8">
-          <Typography variant="h6" className="text-white font-semibold mb-3 text-center">
+        <Paper className="mt-8 border border-white/10 bg-white/5 p-6 backdrop-blur-sm">
+          <Typography
+            variant="h6"
+            className="mb-3 text-center font-semibold text-white"
+          >
             About Blade Ball Trading
           </Typography>
-          <Typography variant="body2" className="text-gray-300 text-center">
-            Blade Ball uses <strong>tokens</strong> as the main currency.
-            Use this calculator to manage your items and determine the right negotiation prices
-            to increase your chances of profitable deals!
+          <Typography variant="body2" className="text-center text-gray-300">
+            Blade Ball uses <strong>tokens</strong> as the main currency. Use
+            this calculator to manage your items and determine the right
+            negotiation prices to increase your chances of profitable deals!
           </Typography>
         </Paper>
       </Container>
 
       {/* Footer */}
-      <Box className="bg-black/20 backdrop-blur-sm border-t border-white/10 mt-20">
+      <Box className="mt-20 border-t border-white/10 bg-black/20 backdrop-blur-sm">
         <Container maxWidth="lg">
           <Box className="py-8 text-center">
             <Typography variant="body2" className="text-gray-400">
-              © 2025 Blade Ball Price Negotiator. Made for the Blade Ball community.
+              © 2025 Blade Ball Price Negotiator. Made for the Blade Ball
+              community.
             </Typography>
           </Box>
         </Container>
